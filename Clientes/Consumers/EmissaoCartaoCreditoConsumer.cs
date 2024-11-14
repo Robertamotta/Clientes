@@ -1,6 +1,5 @@
 ﻿using Clientes.Dominio.DTOs;
 using Clientes.Dominio.Interfaces;
-using MassTransit;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -16,6 +15,7 @@ public class EmissaoCartaoCreditoConsumer : BackgroundService
     private readonly IModel channel;
     private readonly ILogger<EmissaoCartaoCreditoConsumer> logger;
     private readonly IServiceProvider services;
+
     private const string Queue = "queue.respostaemissaocartaocredito.v1";
 
     public EmissaoCartaoCreditoConsumer(ILogger<EmissaoCartaoCreditoConsumer> logger, IServiceProvider services)
@@ -43,7 +43,7 @@ public class EmissaoCartaoCreditoConsumer : BackgroundService
     {
         var consumer = new EventingBasicConsumer(channel);
 
-        consumer.Received += (sender, eventArgs) =>
+        consumer.Received += async (sender, eventArgs) =>
         {
             var contentArray = eventArgs.Body.ToArray();
             var contentString = Encoding.UTF8.GetString(contentArray);
@@ -55,7 +55,7 @@ public class EmissaoCartaoCreditoConsumer : BackgroundService
                 return;
             }
 
-            Complete(cliente).Wait();
+            await Complete(cliente);
 
             channel.BasicAck(eventArgs.DeliveryTag, false);
         };

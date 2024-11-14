@@ -3,15 +3,18 @@ using Clientes.Dominio.Interfaces;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Clientes.Api.Consumers;
 
+[ExcludeFromCodeCoverage]
 public class PropostaCreditoConsumer : BackgroundService
 {
     private readonly IConnection connection;
     private readonly IModel channel;
     private readonly IServiceProvider services;
+    private readonly ILogger<PropostaCreditoConsumer> logger;
 
     private const string Queue = "queue.respostapropostacredito.v1";
 
@@ -32,6 +35,7 @@ public class PropostaCreditoConsumer : BackgroundService
             exclusive: false,
             autoDelete: false);
 
+        this.logger = logger;
         this.services = services;
     }
 
@@ -45,7 +49,14 @@ public class PropostaCreditoConsumer : BackgroundService
             var contentString = Encoding.UTF8.GetString(contentArray);
             var cliente = JsonConvert.DeserializeObject<PropostaCreditoDto>(contentString);
 
+            if (cliente == null)
+            {
+                logger.LogError("Cliente recebido é nulo ou inválido");
+                return;
+            }
+
             await Complete(cliente);
+
             channel.BasicAck(eventArgs.DeliveryTag, false);
         };
 
