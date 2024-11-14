@@ -1,4 +1,5 @@
 ﻿using Clientes.Api.Controllers;
+using Clientes.Dominio.DTOs;
 using Clientes.Dominio.Entidades;
 using Clientes.Dominio.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -69,7 +70,7 @@ public class ClienteControllerTestes
     public async Task Cadastrar_Sucesso()
     {
         // Arrange
-        var cliente = new Cliente { Id = 1 };
+        var cliente = new ClienteDto { Nome = "Nome" };
         clienteServicoMock.Setup(servico => servico.CadastrarCliente(cliente)).Returns(Task.CompletedTask);
 
         // Act
@@ -77,7 +78,7 @@ public class ClienteControllerTestes
 
         // Assert
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        var returnedCliente = Assert.IsType<Cliente>(createdAtActionResult.Value);
+        var returnedCliente = Assert.IsType<ClienteDto>(createdAtActionResult.Value);
         Assert.Equal(cliente, returnedCliente);
         clienteServicoMock.Verify(x => x.CadastrarCliente(cliente), Times.Once);
 
@@ -87,7 +88,7 @@ public class ClienteControllerTestes
     public async Task Cadastrar_Erro()
     {
         // Arrange
-        var cliente = new Cliente { Id = 1 };
+        var cliente = new ClienteDto { Nome = "Nome" };
         clienteServicoMock.Setup(servico => servico.CadastrarCliente(cliente)).ThrowsAsync(new Exception("Erro interno"));
 
         // Act
