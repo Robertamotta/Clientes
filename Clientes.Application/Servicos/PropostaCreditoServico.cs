@@ -6,7 +6,7 @@ namespace Clientes.Aplicacao.Servicos;
 
 public class PropostaCreditoServico(IClienteRepositorio clienteRepositorio) : IPropostaCreditoServico
 {
-    public async Task SalvarPropostaCredito(PropostaCredito propostaCredito)
+    public async Task SalvarPropostaCredito(PropostaCreditoDto propostaCredito)
     {
         var atualizacaoPropostaCredito = propostaCredito.ParaAtualizacaoPropostaCredito();
 

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Clientes.Dominio.DTOs;
 
 [ExcludeFromCodeCoverage]
-public class PropostaCredito
+public class PropostaCreditoDto
 {
     public int Id { get; set; }
     public bool AprovacaoCredito {  get; set; }

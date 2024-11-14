@@ -4,9 +4,9 @@ using MassTransit;
 
 namespace Clientes.Api.Consumers;
 
-public class PropostaCreditoConsumer(ILogger<PropostaCreditoConsumer> logger, IPropostaCreditoServico propostaCreditoServico) : IConsumer<PropostaCredito>
+public class PropostaCreditoConsumer(ILogger<PropostaCreditoConsumer> logger, IPropostaCreditoServico propostaCreditoServico) : IConsumer<PropostaCreditoDto>
 {
-    public async Task Consume(ConsumeContext<PropostaCredito> context)
+    public async Task Consume(ConsumeContext<PropostaCreditoDto> context)
     {
         try
         {

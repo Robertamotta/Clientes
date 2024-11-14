@@ -6,7 +6,7 @@ namespace Clientes.Aplicacao.Servicos;
 
 public class EmissaoCartaoCreditoServico(IClienteRepositorio clienteRepositorio) : IEmissaoCartaoCreditoServico
 {
-    public async Task SalvarEmissaoCartaoCredito(EmissaoCartaoCredito emissaoCartaoCredito)
+    public async Task SalvarEmissaoCartaoCredito(EmissaoCartaoCreditoDto emissaoCartaoCredito)
     {
         var atualizacaoEmissaoCartaoCredito = emissaoCartaoCredito.ParaAtualizacaoQtdCartoesEmitidos();
 

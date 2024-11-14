@@ -4,5 +4,5 @@ namespace Clientes.Dominio.Interfaces;
 
 public interface IPropostaCreditoServico
 {
-    Task SalvarPropostaCredito(PropostaCredito propostaCredito);
+    Task SalvarPropostaCredito(PropostaCreditoDto propostaCredito);
 }

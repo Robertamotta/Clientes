@@ -23,26 +23,26 @@ public class EmissaoCartaoCreditoConsumerTestes
     public async Task EmissaoCartaoCreditoConsumer_Sucesso()
     {
         // Arrange
-        var mensagem = new Mock<EmissaoCartaoCredito>();
+        var mensagem = new Mock<EmissaoCartaoCreditoDto>();
 
         mensagem.Object.Id = 1;
         mensagem.Object.QtdCartoesEmitidos = 1;
 
-        var contextMock = new Mock<ConsumeContext<EmissaoCartaoCredito>>();
+        var contextMock = new Mock<ConsumeContext<EmissaoCartaoCreditoDto>>();
         contextMock.Setup(x => x.Message).Returns(mensagem.Object);
 
         // Act
         await consumer.Consume(contextMock.Object);
 
         // Assert
-        emissaoCartaoCreditoServicoMock.Verify(servico => servico.SalvarEmissaoCartaoCredito(It.Is<EmissaoCartaoCredito>(x => x.Id == 1 && x.QtdCartoesEmitidos == 1)), Times.Once);
+        emissaoCartaoCreditoServicoMock.Verify(servico => servico.SalvarEmissaoCartaoCredito(It.Is<EmissaoCartaoCreditoDto>(x => x.Id == 1 && x.QtdCartoesEmitidos == 1)), Times.Once);
     }
 
     [Fact]
     public async Task EmissaoCartaoCreditoConsumer_Erro()
     {
         //Arrage
-        var context = Mock.Of<ConsumeContext<EmissaoCartaoCredito>>(x => x.Message == new EmissaoCartaoCredito
+        var context = Mock.Of<ConsumeContext<EmissaoCartaoCreditoDto>>(x => x.Message == new EmissaoCartaoCreditoDto
         {
             Id = 1,
             QtdCartoesEmitidos = 1

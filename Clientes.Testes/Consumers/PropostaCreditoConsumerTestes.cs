@@ -22,26 +22,26 @@ public class PropostaCreditoConsumerTestes
     public async Task PropostaCreditoConsumer_Sucesso()
     {
         // Arrange
-        var mensagem = new Mock<PropostaCredito>();
+        var mensagem = new Mock<PropostaCreditoDto>();
 
         mensagem.Object.Id = 1;
         mensagem.Object.AprovacaoCredito = true;
 
-        var contextMock = new Mock<ConsumeContext<PropostaCredito>>();
+        var contextMock = new Mock<ConsumeContext<PropostaCreditoDto>>();
         contextMock.Setup(x => x.Message).Returns(mensagem.Object);
 
         // Act
         await consumer.Consume(contextMock.Object);
 
         // Assert
-        propostaCreditoServicoMock.Verify(servico => servico.SalvarPropostaCredito(It.Is<PropostaCredito>(x => x.Id == 1 && x.AprovacaoCredito == true)), Times.Once);
+        propostaCreditoServicoMock.Verify(servico => servico.SalvarPropostaCredito(It.Is<PropostaCreditoDto>(x => x.Id == 1 && x.AprovacaoCredito == true)), Times.Once);
     }
 
     [Fact]
     public async Task EmissaoCartaoCreditoConsumer_Erro()
     {
         //Arrage
-        var context = Mock.Of<ConsumeContext<PropostaCredito>>(x => x.Message == new PropostaCredito
+        var context = Mock.Of<ConsumeContext<PropostaCreditoDto>>(x => x.Message == new PropostaCreditoDto
         {
             Id = 1,
             AprovacaoCredito = true

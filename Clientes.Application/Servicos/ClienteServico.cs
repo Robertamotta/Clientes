@@ -1,4 +1,5 @@
-﻿using Clientes.Dominio.Entidades;
+﻿using Clientes.Dominio.DTOs;
+using Clientes.Dominio.Entidades;
 using Clientes.Dominio.Interfaces;
 using Clientes.Infraestrutura.Interfaces;
 
@@ -16,9 +17,9 @@ public class ClienteServico(IClienteRepositorio clienteRepositorio, IMensageria 
         return await clienteRepositorio.Obter(id);
     }
 
-    public async Task CadastrarCliente(Cliente cliente)
+    public async Task CadastrarCliente(ClienteDto clienteDto)
     {
-        await clienteRepositorio.Cadastrar(cliente);
+        var cliente = await clienteRepositorio.Cadastrar(clienteDto);
         await mensageria.EnviarCadastroClienteNovo(cliente);
     }
 

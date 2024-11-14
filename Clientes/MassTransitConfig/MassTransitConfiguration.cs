@@ -1,8 +1,10 @@
 ﻿using Clientes.Api.Consumers;
 using Clientes.Dominio.Entidades;
 using MassTransit;
+using RabbitMQ.Client;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication;
+using System.Text.Json;
 
 namespace Clientes.Api.MassTransitConfig;
 
@@ -16,45 +18,49 @@ public static class MassTransitConfiguration
 
     private static void ConfigurarRabbitMQ(this IServiceCollection services)
     {
-        var host = Environment.GetEnvironmentVariable("RABBITMQ_HOST");
-        var vhost = Environment.GetEnvironmentVariable("RABBITMQ_VHOST");
-        ushort.TryParse(Environment.GetEnvironmentVariable("RABBITMQ_PORT"), out ushort port);
-        var username = Environment.GetEnvironmentVariable("RABBITMQ_USER");
-        var password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD");
-        bool.TryParse(Environment.GetEnvironmentVariable("RABBITMQ_USE_SSL"), out bool useSsl);
 
-        services.AddMassTransit(x =>
-        {
-            x.AddConsumer<PropostaCreditoConsumer>();
-            x.AddConsumer<EmissaoCartaoCreditoConsumer>();
+        
 
-            x.UsingRabbitMq((context, cfg) =>
-           {
-               cfg.Host(host, port, vhost, h =>
-               {
-                   h.Username(username);
-                   h.Password(password);
-                   if (useSsl)
-                       h.UseSsl(s => s.Protocol = SslProtocols.Tls12);
-                   h.ConfigureBatchPublish(b => b.Enabled = true);
-                   h.PublisherConfirmation = true;
-               });
-               cfg.ClearSerialization();
-               cfg.UseRawJsonSerializer();
+        //services.AddMassTransit(x =>
+        //{
+        //    x.AddConsumer<PropostaCreditoConsumer>();
+        //    x.AddConsumer<EmissaoCartaoCreditoConsumer>();
 
-               cfg.Publish<Cliente>(ConfigurePublishEvento);
+        //    x.UsingRabbitMq((context, cfg) =>
+        //   {
+        //       cfg.Host(host, port, vhost, h =>
+        //       {
+        //           h.Username(username);
+        //           h.Password(password);
+        //           if (useSsl)
+        //               h.UseSsl(s => s.Protocol = SslProtocols.Tls12);
+        //           h.ConfigureBatchPublish(b => b.Enabled = true);
+        //           h.PublisherConfirmation = true;
+        //       });
 
-               ConfigureEndpoint<PropostaCreditoConsumer>(context, cfg, "queue.propostacredito.v1", prefetchCount: 10);
-               ConfigureEndpoint<EmissaoCartaoCreditoConsumer>(context, cfg, "queue.emissaocartaocredito.v1", prefetchCount: 10);
-           });
-        });
+        //       //cfg.ClearSerialization();
+        //       cfg.UseJsonSerializer();
+
+        //       cfg.ConfigureJsonSerializerOptions(options =>
+        //       {
+        //           options.PropertyNameCaseInsensitive = true;
+        //           return options;
+        //       });
+
+        //       cfg.Publish(ConfigurePublishEvento);
+
+
+        //       ConfigureEndpoint<PropostaCreditoConsumer>(context, cfg, "queue.propostacredito.v1");
+        //       ConfigureEndpoint<EmissaoCartaoCreditoConsumer>(context, cfg, "queue.emissaocartaocredito.v1");
+        //   });
+        //});
     }
 
     private static void ConfigureEndpoint<TConsumer>(IBusRegistrationContext context,
                                                      IRabbitMqBusFactoryConfigurator cfg,
                                                      string queue,
                                                      bool configureConsumeTopology = true,
-                                                     int prefetchCount = 30, int attepmts = 2)
+                                                     int prefetchCount = 1, int attempts = 2)
         where TConsumer : class, IConsumer
     {
         cfg.ReceiveEndpoint(queue, e =>
@@ -63,13 +69,13 @@ public static class MassTransitConfiguration
             e.PrefetchCount = prefetchCount;
             e.UseMessageRetry(r =>
             {
-                r.Interval(attepmts, TimeSpan.FromSeconds(5));
+                r.Interval(attempts, TimeSpan.FromSeconds(5));
             });
             e.ConfigureConsumer<TConsumer>(context);
         });
     }
 
-    public static void ConfigurePublishEvento(IRabbitMqMessagePublishTopologyConfigurator<Cliente> publishTopologyConfigurator)
+    public static void ConfigurePublishEvento(IRabbitMqMessagePublishTopologyConfigurator<string> publishTopologyConfigurator)
     {
         var exchange = publishTopologyConfigurator.Exchange.ExchangeName;
         var queue = "queue.cadastrocliente.v1";

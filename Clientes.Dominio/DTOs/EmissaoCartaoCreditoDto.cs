@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Clientes.Dominio.DTOs;
 
 [ExcludeFromCodeCoverage]
-public class EmissaoCartaoCredito
+public class EmissaoCartaoCreditoDto
 {
     public int Id { get; set; }
     public int QtdCartoesEmitidos {  get; set; }

@@ -1,4 +1,5 @@
-﻿using Clientes.Dominio.Entidades;
+﻿using Clientes.Dominio.DTOs;
+using Clientes.Dominio.Entidades;
 using Clientes.Infraestrutura.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
@@ -12,10 +13,22 @@ public class ClienteRepositorio(ClientesContext context) : IClienteRepositorio
 
     public async Task<Cliente> Obter(int id) => await context.Cliente.FindAsync(id);
 
-    public async Task Cadastrar(Cliente cliente)
+    public async Task<Cliente> Cadastrar(ClienteDto clienteDto)
     {
+        var cliente = new Cliente
+        {
+            Nome = clienteDto.Nome,
+            Cpf = clienteDto.Cpf,
+            Email = clienteDto.Email,
+            Renda = clienteDto.Renda,
+            ScoreCredito = clienteDto.ScoreCredito,
+            Telefone = clienteDto.Telefone
+        };
+
         await context.Cliente.AddAsync(cliente);
         await context.SaveChangesAsync();
+
+        return cliente;
     }
 
     public async Task Atualizar(Cliente cliente)

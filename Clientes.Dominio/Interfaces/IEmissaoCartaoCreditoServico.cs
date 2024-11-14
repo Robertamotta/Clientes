@@ -4,5 +4,5 @@ namespace Clientes.Dominio.Interfaces;
 
 public interface IEmissaoCartaoCreditoServico
 {
-    Task SalvarEmissaoCartaoCredito(EmissaoCartaoCredito emissaoCartaoCredito);
+    Task SalvarEmissaoCartaoCredito(EmissaoCartaoCreditoDto emissaoCartaoCredito);
 }

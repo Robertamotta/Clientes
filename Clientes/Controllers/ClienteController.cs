@@ -1,4 +1,5 @@
-﻿using Clientes.Dominio.Entidades;
+﻿using Clientes.Dominio.DTOs;
+using Clientes.Dominio.Entidades;
 using Clientes.Dominio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,14 +46,14 @@ public class ClienteController(ILogger<ClienteController> logger, IClienteServic
     }
 
     [HttpPost]
-    public async Task<IActionResult> Cadastrar([FromBody] Cliente cliente)
+    public async Task<IActionResult> Cadastrar([FromBody] ClienteDto cliente)
     {
         try
         {
             await clienteServico.CadastrarCliente(cliente);
 
-            logger.LogInformation("Cliente cadastrado com sucesso. ID: {Id}", cliente.Id);
-            return CreatedAtAction(nameof(Obter), new { id = cliente.Id }, cliente);
+            logger.LogInformation("Cliente cadastrado com sucesso. ID: {Id}", cliente.Nome);
+            return CreatedAtAction(nameof(Obter), new { id = cliente.Nome }, cliente);
         }
         catch (Exception ex)
         {
