@@ -33,7 +33,15 @@ public class ClienteRepositorio(ClientesContext context) : IClienteRepositorio
 
     public async Task Atualizar(Cliente cliente)
     {
-        context.Cliente.Update(cliente);
+        var entity = context.Cliente.FirstOrDefault(x => x.Id == cliente.Id);
+
+        if (entity == null)
+            return;
+
+        entity.AprovacaoCredito = cliente.AprovacaoCredito;
+        entity.QtdCartoesEmitidos = cliente.QtdCartoesEmitidos;
+
+        context.Cliente.Update(entity);
         await context.SaveChangesAsync();
     }
 

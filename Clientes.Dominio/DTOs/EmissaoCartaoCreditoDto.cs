@@ -14,7 +14,8 @@ public class EmissaoCartaoCreditoDto
         return new Cliente
         {
             Id = Id,
-            QtdCartoesEmitidos = QtdCartoesEmitidos
+            QtdCartoesEmitidos = QtdCartoesEmitidos,
+            AprovacaoCredito = true,
         };
     }
 }
