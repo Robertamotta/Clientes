@@ -64,7 +64,6 @@ public class EmissaoCartaoCreditoConsumer : BackgroundService
 
         return Task.CompletedTask;
     }
-
     public async Task Complete(EmissaoCartaoCreditoDto emissaoCartaoCredito)
     {
         using var scope = services.CreateScope();
